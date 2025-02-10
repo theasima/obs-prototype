@@ -1,7 +1,3 @@
-# How to run:
-# conda activate retrain1
-# python retrain.py
-
 from dataclasses import dataclass
 
 @dataclass
@@ -66,21 +62,6 @@ class LocalDataset(Dataset):
         path = self.paths[index]
         img = Image.open(path).convert('L')  # Open the image in grayscale mode
         return self.transform(img)
-
-def gen_mask():
-    mask = np.zeros((64,64), dtype=np.uint8)
-    mask_height = random.randint(10, 20)  # Random height for the mask
-    mask_width = random.randint(10, 20)   # Random width for the mask
-        
-    # Randomly choose the position to place the mask
-    top = random.randint(0, 64 - mask_height)
-    left = random.randint(0, 64 - mask_width)
-        
-    mask[top:top + mask_height, left:left + mask_width] = 1  # Set the mask area to 1, unmaksed area leave as is (0)
-    mask = Image.fromarray(mask * 255)
-    mask = transforms.ToTensor()(mask)
-    mask = mask.squeeze(0)
-    return mask
 
 # Fine-tuning pretrained model using inpainting mask loss
 dataset = LocalDataset(config.dataset_name, image_size=config.image_size)
